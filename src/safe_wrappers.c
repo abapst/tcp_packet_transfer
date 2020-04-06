@@ -1,7 +1,7 @@
-#include "csapp.h"
+#include "safe_wrappers.h"
 
-/* Reentrant, protocol independent helper to establish connection with a 
- * server. 
+/* Reentrant, protocol independent helper to establish connection with a
+ * server.
  */
 int open_clientfd(char *hostname, char *port, struct sockaddr *sa)
 {
@@ -22,11 +22,12 @@ int open_clientfd(char *hostname, char *port, struct sockaddr *sa)
                  p->ai_socktype,\
                  p->ai_protocol)) < 0)
       continue; /* Socket failed, try the next */
-    
+
     /* Connect to the server */
-    if (connect(clientfd, p->ai_addr, p->ai_addrlen) != -1)
+    if (connect(clientfd, p->ai_addr, p->ai_addrlen) != -1) {
       *sa = *p->ai_addr; /* populate sockaddr */
       break; /* Success */
+    }
     Close(clientfd); /* Connect failed, try another */
   }
 
@@ -52,7 +53,7 @@ int open_listenfd(char *port)
   hints.ai_flags = AI_PASSIVE | AI_ADDRCONFIG; /* ... on any IP address */
   hints.ai_flags |= AI_NUMERICSERV;      /* ... using port number */
   Getaddrinfo(NULL, port, &hints, &listp);
-  
+
   /* Walk the list for one that we can bind to */
   for (p = listp; p; p = p->ai_next) {
     /* Create a socket descriptor */
@@ -60,11 +61,11 @@ int open_listenfd(char *port)
                  p->ai_socktype,\
                  p->ai_protocol)) < 0)
       continue; /* Socket failed, try the next */
-    
+
     /* Eliminates "Address already in use" error from bind */
     Setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR,
       (const void *)&optval, sizeof(int));
-    
+
     /* Bind the descriptor to the address */
     if (bind(listenfd, p->ai_addr, p->ai_addrlen) == 0)
       break; /* Success */
@@ -75,7 +76,7 @@ int open_listenfd(char *port)
   Freeaddrinfo(listp);
   if (!p) /* No address worked */
     return -1;
-  
+
   /* Make it a listening socket ready to accept connection requests */
   if (listen(listenfd, LISTENQ) < 0) {
     Close(listenfd);
@@ -92,7 +93,7 @@ void Pthread_create(pthread_t *tidp, pthread_attr_t *attrp,
                     void * (*routine)(void *), void *argp)
 {
   int rc;
-  
+
   if ((rc = pthread_create(tidp, attrp, routine, argp)) != 0)
   posix_error(rc, "Pthread_create error");
 }
@@ -124,7 +125,7 @@ handler_t *Signal(int signum , handler_t *handler)
   struct sigaction action, old_action;
 
   action.sa_handler = handler;
-  sigemptyset(&action.sa_mask); /* Block sigs of type being handled */ 
+  sigemptyset(&action.sa_mask); /* Block sigs of type being handled */
   action.sa_flags = SA_RESTART; /* Restart syscalls if possible */
 
   if (sigaction(signum, &action, &old_action) < 0)
@@ -186,13 +187,13 @@ ssize_t rio_writen(int fd, void *usrbuf, size_t n)
 static ssize_t rio_read(rio_t *rp, char *usrbuf, size_t n)
 {
   int cnt;
-  
+
   while (rp->rio_cnt <= 0) { /* refill if buf is empty */
     rp->rio_cnt = read(rp->rio_fd, rp->rio_buf, sizeof(rp->rio_buf));
     if (rp->rio_cnt < 0) {
       if (errno != EINTR) /* interrupted by sig handler return */
         return -1;
-    } 
+    }
     else if (rp ->rio_cnt == 0) /* EOF */
       return 0;
     else
@@ -253,7 +254,7 @@ void Setsockopt(int s, int level, int optname, const void *optval, int optlen)
 
   if ((rc = setsockopt(s,level,optname,optval,optlen)) < 0)
     unix_error("Setsockopt error");
-} 
+}
 
 int Open_clientfd(char *hostname, char *port, struct sockaddr *sa)
 {
@@ -277,7 +278,7 @@ void Getaddrinfo( const char *node, const char *service,
                   const struct addrinfo *hints, struct addrinfo **res)
 {
   int rc;
-  
+
   if ((rc = getaddrinfo(node,service,hints,res)) != 0)
     gai_error(rc, "Getaddrinfo error");
 }
@@ -293,7 +294,7 @@ void Getnameinfo(const struct sockaddr *sa, socklen_t salen,
 {
   int rc;
 
-  if ((rc = getnameinfo(sa, salen, host, 
+  if ((rc = getnameinfo(sa, salen, host,
               hostlen, service, servlen, flags)) != 0)
     unix_error("Getnameinfo error");
 }
@@ -372,7 +373,7 @@ char *Fgets(char *ptr, int n, FILE *stream)
 
   if (((rptr = fgets(ptr,n,stream)) == NULL) && ferror(stream))
     app_error("Fgets error");
-  
+
   return rptr;
 }
 
@@ -382,7 +383,7 @@ char *Fgets(char *ptr, int n, FILE *stream)
 void unix_error(char *msg) /* Unix-style error */
 {
   fprintf(stderr, "%s: %s\n", msg, strerror(errno));
-  exit(0); 
+  exit(0);
 }
 
 void posix_error(int code, char *msg) /* Posix-style error */

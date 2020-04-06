@@ -65,7 +65,7 @@ void Sem_init(sem_t *sem, int pshared, unsigned int value);
 
 handler_t *Signal(int signum, handler_t *handler);
 
-char *Fgets(char *ptr, int n, FILE *stream); 
+char *Fgets(char *ptr, int n, FILE *stream);
 void Fputs(const char *ptr, FILE *stream);
 
 void Pthread_create(pthread_t *tidp, pthread_attr_t *attrp, void * (*routine)(void *), void *argp);
@@ -81,7 +81,7 @@ ssize_t rio_writen(int fd, void *usrbuf, size_t n);
 void Rio_writen(int fd, void *usrbuf, size_t n);
 
 ssize_t rio_readlineb(rio_t *rp, void *usrbuf, size_t maxlen);
-ssize_t Rio_readlineb(rio_t *rp, void *usrbuf, size_t maxlen); 
+ssize_t Rio_readlineb(rio_t *rp, void *usrbuf, size_t maxlen);
 
 void Setsockopt(int s, int level, int optname, const void *optval, int optlen);
 

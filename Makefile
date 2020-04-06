@@ -4,7 +4,7 @@ LDFLAGS = -pthread -lssl -lcrypto
 INC = -I./include
 
 OBJ = \
-	obj/csapp.o \
+	obj/safe_wrappers.o \
 	obj/ring_buffer.o
 
 BIN = \

@@ -44,14 +44,14 @@ void destroy_buf(ring_buffer *buf)
   printf("\nSIGINT caught, deleting ring buffer\n");
   for (ii = 0; ii < buf->n_items; ii++) {
     Free(buf->data[ii]);
-  } 
+  }
   Free(buf);
 }
 
 void enqueue(ring_buffer *buf, buf_item *cache_buf)
 {
   pthread_mutex_lock(&buf->lock);
-  buf_item *item = buf->data[ (buf->write++) & ((buf->n_items)-1) ]; 
+  buf_item *item = buf->data[ (buf->write++) & ((buf->n_items)-1) ];
   memcpy(item,cache_buf,sizeof(buf_item));
   pthread_mutex_unlock(&buf->lock);
 
@@ -81,7 +81,7 @@ void dequeue(ring_buffer *buf)
 /*********************************************************************
  * Simulate processing of a buffer item
  * *******************************************************************/
-void process_item(buf_item *item) 
+void process_item(buf_item *item)
 {
   usleep(0);
 }
@@ -99,7 +99,7 @@ void print_buffer(ring_buffer *buf)
       printf("| -- ");
     else
       printf("| %02d ",buf->data[ii]->id);
-  } 
+  }
   printf("|\n");
 }
 
@@ -115,9 +115,9 @@ time_t get_time_ms(struct timeval *tv)
 
 /*********************************************************************
  * Computes the MD5 checksum of a buffer item (with the checksum  and
- * timestamp fields set to 0), and updates the checksum field to the 
+ * timestamp fields set to 0), and updates the checksum field to the
  * checksum value. The original checksum is compared to the new one
- * and returns 1 if they match, else 0. 
+ * and returns 1 if they match, else 0.
  *
  * Note: the MD5 hash is secure, but too slow for data transmission.
  *********************************************************************/

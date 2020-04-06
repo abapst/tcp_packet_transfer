@@ -1,0 +1,3 @@
+v0.1.1, 06/04/2020 -- Removed whitespace
+                    - Renamed csapp to safe_wrappers
+                    - Readme troubleshooting instructions if md5.h can't be found

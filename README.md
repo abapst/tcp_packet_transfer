@@ -4,6 +4,12 @@
 ./build.sh
 </pre>
 
+If you get a compiler error complaining about openssl/md5.h not found, try this:
+
+<pre>
+sudo apt-get install libssl-dev
+</pre>
+
 Then open two terminals. In the first terminal type (the port number is not important):
 
 <pre>

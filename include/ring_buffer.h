@@ -6,7 +6,7 @@
 #ifndef __RING_BUFFER_H__
 #define __RING_BUFFER_H__
 
-#include "csapp.h"
+#include "safe_wrappers.h"
 #include <openssl/md5.h>
 
 #define MEGABYTE 1048576.
@@ -27,7 +27,7 @@ typedef struct {
   int n_items;
   sem_t countsem, spacesem;
   pthread_mutex_t lock;
-  buf_item *data[]; // flexible array member, will be malloc'd during init 
+  buf_item *data[]; // flexible array member, will be malloc'd during init
 } ring_buffer;
 
 /* Ring buffer functions */
@@ -39,7 +39,7 @@ void print_buffer(ring_buffer *buf);
 void process_item(buf_item *item);
 
 /* Helper functions */
-time_t get_time_ms(struct timeval *tv); 
+time_t get_time_ms(struct timeval *tv);
 int md5checksum(char *item,size_t length);
 void print_checksum(buf_item *item);
 

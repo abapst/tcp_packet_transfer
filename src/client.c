@@ -1,10 +1,10 @@
-/************************************************************************** 
+/**************************************************************************
  * Client routine simulates connecting to an image processing server on
  * a network (such as a Tegra TX1) and sending over a number of large image
  * data packets (i.e. SAR or Optical). The server has a limited amount of
  * space so it queues the packets in a ring buffer while processing. If the
  * buffer is full and there is no space available, the server read thread
- * blocks and the client is unable to send anything until a spot opens up. 
+ * blocks and the client is unable to send anything until a spot opens up.
  *
  * Author: Aleksander Bapst
  **************************************************************************/
@@ -57,7 +57,7 @@ int main(int argc, char **argv)
         exit(0);
       default:
         continue;
-    } 
+    }
   }
 
   /* Open connection to server */
@@ -97,7 +97,7 @@ int main(int argc, char **argv)
     Rio_writen(clientfd,msg,MAXLINE);
 
     /* Listen for acknowledgement from server */
-    Rio_readnb(&rio_server,msg,MAXLINE); 
+    Rio_readnb(&rio_server,msg,MAXLINE);
     if (!strcmp(msg,"ACK")) {
 
       packet->timestamp = get_time_ms(&tv);
